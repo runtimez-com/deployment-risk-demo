@@ -1,7 +1,7 @@
 # Values for the demo app. Each demo PR changes a few of these lines.
 nameOverride: web
 image:
-  tag: "1.4.2"
+  tag: "1.4.3"
 replicaCount: 3
 probes:
   readiness: true
