@@ -1,0 +1,20 @@
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "demo-app.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "demo-app.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- if .Values.service.selector }}
+    {{- toYaml .Values.service.selector | nindent 4 }}
+    {{- else }}
+    app.kubernetes.io/name: {{ include "demo-app.name" . }}
+    {{- end }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+{{- end }}

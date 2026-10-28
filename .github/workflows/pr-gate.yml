@@ -1,0 +1,25 @@
+# .github/workflows/pr-gate.yml
+name: deployment-risk
+on: pull_request
+permissions:
+  contents: read
+  pull-requests: write   # the sticky PR comment
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base-src
+      - uses: azure/setup-helm@v4
+      - run: |
+          mkdir -p rendered
+          helm template web ./chart -f values.yaml > rendered/head.yaml
+          helm template web base-src/chart -f base-src/values.yaml > rendered/base.yaml
+      - uses: runtimez-com/deployment-risk-action@v1
+        with:
+          manifests: rendered/head.yaml
+          baseline-manifests: rendered/base.yaml
+          fail-on: HIGH

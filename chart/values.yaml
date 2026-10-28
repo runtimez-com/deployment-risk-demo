@@ -1,0 +1,66 @@
+# CLEAN baseline — a well-configured app. The gate should score 0 / LOW on this.
+replicaCount: 2
+strategy: RollingUpdate          # not Recreate
+
+image:
+  repository: ghcr.io/acme/demo-app
+  tag: "1.4.2"                    # pinned, not :latest
+  pullPolicy: IfNotPresent
+
+probes:
+  enabled: true                  # readiness + liveness present
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"                  # request <= limit
+    memory: "256Mi"
+
+security:
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  privileged: false
+  seccompProfile: RuntimeDefault
+  dropAllCapabilities: true
+  addCapabilities: []
+  hostNetwork: false
+  hostPort: 0
+
+nameOverride: ""                 # empty = the chart name (demo-app)
+
+# ── Optional objects for the scenarios in ../scenarios/ — all OFF by default ──
+# With these off, values.yaml and values-bad.yaml render exactly the Deployment above.
+topologySpread:
+  enabled: false                 # spread replicas across nodes
+
+service:
+  enabled: false
+  type: ClusterIP
+  selector: {}                   # empty = select the Deployment's pods
+
+ingress:
+  enabled: false
+  host: demo.example.com
+  tls: true
+  tlsSecretName: demo-app-tls
+
+pdb:
+  enabled: false
+  minAvailable: 1
+
+hpa:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  cpuUtilization: 70
+
+networkPolicy:
+  enabled: false
+
+postgres:
+  enabled: false
+  image: postgres:15.8
+  storage: 10Gi

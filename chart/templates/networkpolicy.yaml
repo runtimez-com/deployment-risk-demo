@@ -1,0 +1,45 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "demo-app.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "demo-app.name" . }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "demo-app.name" . }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080
+{{- if .Values.postgres.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "demo-app.name" . }}-postgres
+  labels:
+    app.kubernetes.io/name: {{ include "demo-app.name" . }}-postgres
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "demo-app.name" . }}-postgres
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ include "demo-app.name" . }}
+      ports:
+        - protocol: TCP
+          port: 5432
+{{- end }}
+{{- end }}
