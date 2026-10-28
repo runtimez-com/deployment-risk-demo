@@ -10,10 +10,10 @@ resources:
   limits:
     memory: "512Mi"
 pdb:
-  enabled: true
+  enabled: false
   minAvailable: 1
 topologySpread:
-  enabled: true
+  enabled: false
 service:
   enabled: true
   type: ClusterIP
