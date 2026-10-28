@@ -2,13 +2,13 @@
 nameOverride: web
 image:
   tag: "1.4.2"
-replicaCount: 3
+replicaCount: 1
 probes:
-  readiness: true
+  readiness: false
   liveness: true
 resources:
   limits:
-    memory: "512Mi"
+    memory: "256Mi"
 pdb:
   enabled: true
   minAvailable: 1
