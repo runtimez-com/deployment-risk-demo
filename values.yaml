@@ -16,10 +16,12 @@ topologySpread:
   enabled: true
 service:
   enabled: true
-  type: ClusterIP
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: demo-web
 ingress:
   enabled: true
-  tls: true
+  tls: false
 networkPolicy:
   enabled: true
 postgres:
